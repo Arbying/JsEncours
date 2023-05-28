@@ -24,7 +24,7 @@ let cursors;
 let platforms;
 let porteFin;
 let timerText;
-let remainingTime = 10;
+let remainingTime = 300;
 let scoreText;
 let score = 0;
 
@@ -67,7 +67,7 @@ function create() {
 
     porteFin = this.physics.add.staticImage(6800, 400 - 132 / 2, 'porteFermee');
 
-    player = this.physics.add.sprite(15, 200, 'prince');
+    player = this.physics.add.sprite(30, 200, 'prince');
     player.setBounce(0.2);
     player.setCollideWorldBounds(true);
 
@@ -417,11 +417,27 @@ function create() {
     function update() {
         if (cursors.left.isDown) {
             player.setVelocityX(-460);
-            player.setTexture('prince');
+            if (player.texture.key === 'prince')
+            {
+                player.setTexture('princeDep');
+            }
+            else
+            {
+               player.setTexture('prince'); 
+            }
+            
         } else if (cursors.right.isDown) {
             player.setVelocityX(460);
+            if (player.texture.key === 'princeDroite')
+            {
+                player.setTexture('princeDroiteDep')
+            }
+            else{
             player.setTexture('princeDroite');
-        } else {
+            }
+
+        }
+         else {
             player.setVelocityX(0);
         }
         if (cursors.up.isDown && player.body.touching.down) {
