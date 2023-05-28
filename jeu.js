@@ -416,7 +416,7 @@ function create() {
 
     function update() {
         if (cursors.left.isDown) {
-            player.setVelocityX(-460);
+            player.setVelocityX(-100);
             if (player.texture.key === 'prince')
             {
                 player.setTexture('princeDep');
@@ -427,7 +427,7 @@ function create() {
             }
             
         } else if (cursors.right.isDown) {
-            player.setVelocityX(460);
+            player.setVelocityX(100);
             if (player.texture.key === 'princeDroite')
             {
                 player.setTexture('princeDroiteDep')
