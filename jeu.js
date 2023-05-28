@@ -24,7 +24,7 @@ let cursors;
 let platforms;
 let porteFin;
 let timerText;
-let remainingTime = 300;
+let remainingTime = 10;
 let scoreText;
 let score = 0;
 
@@ -35,6 +35,8 @@ function preload() {
     this.load.image('fond', 'img/Noir.png');
     this.load.image('prince', 'img/PrinceGauche.png');
     this.load.image('princeDroite', 'img/PrinceDroite.png');
+    this.load.image('princeDroiteDep', 'img/PrinceDroiteDep.png');
+    this.load.image('princeDep', 'img/PrinceGaucheDep.png');
     this.load.image('sol', 'img/Sol.png');
     this.load.image('porteFin', 'img/porteFin.png');
     this.load.image('porteGagne', 'img/porteGagne.png');
@@ -361,9 +363,27 @@ function create() {
         platforms.create(1700,40, 'Grille');
         platforms.create(4700,40, 'Grille');
 
-        platforms.create(4650, 230, 'Piege1');
-        platforms.create(5700, 390, 'Piege1');
+        const plateforme1 = platforms.create(4650, 230, 'Piege1');
+        const plateforme2 = platforms.create(5700, 390, 'Piege1');
+        let trapState = 'Piege1';
+        setInterval(toggleTrapImage, 500);
+        function toggleTrapImage() {
+            if (trapState === 'Piege1') {
+              plateforme1.setTexture('Piege2');
+              plateforme2.setTexture('Piege2');
+              trapState = 'Piege2';
+            } else {
+              plateforme1.setTexture('Piege1');
+              plateforme2.setTexture('Piege1');
+              trapState = 'Piege1';
+            }
+          }
 
+          //Collisions : 
+          this.physics.add.collider(player, platforms, trapCollision, null, this);
+
+        //images prince :
+        
 
         scoreText = this.add.text(20, 40, 'Score: ' + score, { fontSize: '24px', fill: '#ffffff' }).setScrollFactor(0);
 
@@ -380,7 +400,18 @@ function create() {
             callback: updateTimer,
             callbackScope: this,
             loop: true
+
         });
+
+        this.time.addEvent({
+            delay: 900, // Délai de 0.9 secondes (900 millisecondes)
+            callback: checkTime,
+            callbackScope: this,
+            loop: true // Répéter indéfiniment
+        });
+
+
+
     }
 
     function update() {
@@ -417,17 +448,18 @@ function create() {
 
     function updateTimer() {
         if (!gameWonState && !gameOverState) {
-            remainingTime--;
-            const temps = remainingTime;
-            timerText.setText('Temps restant: ' + remainingTime);
-            score = remainingTime;
-            scoreText.setText('Score: ' + score);
-                // Il bloque à deux... 
-            if (temps == 1) {
-                gameOver(this);
-            }
+          remainingTime--;
+          const temps = remainingTime;
+          timerText.setText('Temps restant: ' + remainingTime);
+          score = remainingTime;
+          scoreText.setText('Score: ' + score);
+      
+          if (temps < 0) {
+            gameOver();
+          }
         }
-    }
+      }
+      
 
 
 
@@ -441,11 +473,28 @@ function create() {
 
 
     function gameOver() {
-        
         player.setTint(0xff0000);
-        const winText = this.add.text(50, 300, 'PERDU', { fontSize: '120px', fill: '#151515' });
-            winText.setScrollFactor(0);
+        const winText = this.add.text(
+          this.cameras.main.centerX,
+          this.cameras.main.centerY,
+          'PERDU',
+          { fontSize: '120px', fill: '#151515' }
+        );
+        winText.setOrigin(0.5);
+        winText.setScrollFactor(0);
         this.physics.pause();
+        gameOverState = true;
+      }
+
+
+    function trapCollision(player, trap) {
+        if (trap.texture.key === 'Piege1') {
+          gameOver();
+        }
+      }
+
+      function checkTime() {
+        if (!gameWonState && !gameOverState && remainingTime === 0) {
+            gameOver();
+        }
     }
-
-
