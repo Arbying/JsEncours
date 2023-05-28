@@ -1,0 +1,272 @@
+const config = {
+    type: Phaser.AUTO,
+    width: 7000,
+    height: 520,
+    parent: 'gameContainer',
+    scene: {
+        preload: preload,
+        create: create,
+        update: update
+    },
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 100 },
+            debug: false
+        }
+    }
+};
+
+const game = new Phaser.Game(config);
+
+let player;
+let cursors;
+let platforms;
+let porteFin;
+let timerText;
+let remainingTime = 300;
+let scoreText;
+let score = 0;
+
+let gameWonState = false;
+let gameOverState = false;
+
+function preload() {
+    this.load.image('fond', 'img/Noir.png');
+    this.load.image('prince', 'img/PrinceGauche.png');
+    this.load.image('princeDroite', 'img/PrinceDroite.png');
+    this.load.image('sol', 'img/Sol.png');
+    this.load.image('porteFin', 'img/porteFin.png');
+    this.load.image('porteGagne', 'img/porteGagne.png');
+    this.load.image('porteFermee', 'img/porteFermee.png');
+    this.load.image('porteGH', 'img/porteGH.png');
+    this.load.image('briqueOriginale', 'img/briqueOriginale.png');
+    this.load.image('Enemi', 'img/Enemi.png');
+    this.load.image('Grille', 'img/Grille.png');
+    this.load.image('OuvreGrille', 'img/ouvreGrille.png');
+    this.load.image('Point1', 'img/Point1.png');
+    this.load.image('Balle', 'Balle.png');
+}
+
+function create() {
+    this.add.image(0, 0, 'fond').setOrigin(0, 0).setScale(10, 1);
+
+    this.cameras.main.setBounds(0, 0, 7000, 520);
+    this.cameras.main.setViewport(0, 0, 700, 520);
+
+    platforms = this.physics.add.staticGroup();
+    for (let i = 0; i <= 70; i++) {
+        platforms.create(i * 100, 10, 'sol');
+        if (i != 10)
+            platforms.create(i * 100, 470, 'sol');
+    }
+
+    porteFin = this.physics.add.staticImage(6800, 400 - 132 / 2, 'porteFermee');
+
+    player = this.physics.add.sprite(15, 200, 'prince');
+    player.setBounce(0.2);
+    player.setCollideWorldBounds(true);
+
+    
+
+    
+        //Premier écran
+            //1er tiers
+            platforms.create(0 , 50, 'porteGH');
+            platforms.create(0 , 120, 'porteGH');
+            platforms.create(0 , 160, 'sol');
+            platforms.create(100, 160, 'sol');
+            platforms.create(200, 160, 'sol');
+            platforms.create(500, 160, 'sol');
+                platforms.create(500,155, 'OuvreGrille');
+            platforms.create(600, 160, 'sol');
+            platforms.create(800, 160, 'sol');
+            platforms.create(900, 160, 'sol');
+            platforms.create(1100, 160, 'sol');
+            platforms.create(1200, 160, 'sol');
+            platforms.create(1300, 160, 'sol');
+            platforms.create(1400, 160, 'sol');
+            platforms.create(1500, 160, 'sol');
+                platforms.create(1550,140, 'Enemi');
+            platforms.create(1600, 160, 'sol');
+            platforms.create(1700, 160, 'sol');
+                platforms.create(1700,40, 'Grille');
+            platforms.create(1800, 160, 'sol');
+            platforms.create(1900, 160, 'sol');
+            platforms.create(2000, 160, 'sol');
+
+            platforms.create(400, 40, 'briqueOriginale');
+            platforms.create(400, 90, 'briqueOriginale');
+            platforms.create(400, 140, 'briqueOriginale');
+            platforms.create(450, 40, 'briqueOriginale');
+            platforms.create(450, 90, 'briqueOriginale');
+            platforms.create(450, 140, 'briqueOriginale');
+            platforms.create(2200, 40, 'briqueOriginale');
+            platforms.create(2200, 90, 'briqueOriginale');
+            platforms.create(2200, 140, 'briqueOriginale');
+
+
+
+        //2eme tiers
+            platforms.create(0 , 171, 'porteGH');
+            platforms.create(0 , 171+70, 'porteGH');
+            platforms.create(0 , 171+100, 'porteGH');
+            platforms.create(0 , 310, 'sol');
+            platforms.create(100 , 310, 'sol');
+            platforms.create(200 , 310, 'sol');
+            platforms.create(300 , 310, 'sol');
+            platforms.create(500 , 310, 'sol');
+            platforms.create(600 , 310, 'sol');
+            platforms.create(700 , 310, 'sol');
+            platforms.create(900 , 310, 'sol');
+            platforms.create(1800, 310, 'sol');
+            platforms.create(1900, 310, 'sol');
+            platforms.create(2125, 310, 'sol');
+            platforms.create(2275, 310, 'sol');
+            platforms.create(2375, 310, 'sol');
+            platforms.create(2475, 310, 'sol');
+            platforms.create(2575, 310, 'sol');
+            platforms.create(2675, 310, 'sol');
+            platforms.create(2775, 310, 'sol');
+            
+
+            platforms.create(450, 190, 'briqueOriginale');
+            platforms.create(450, 240, 'briqueOriginale');
+            platforms.create(450, 290, 'briqueOriginale');
+            platforms.create(875, 190, 'briqueOriginale');
+            platforms.create(875, 240, 'briqueOriginale');
+            platforms.create(875, 290, 'briqueOriginale');
+            platforms.create(925, 190, 'briqueOriginale');
+            platforms.create(925, 240, 'briqueOriginale');
+            platforms.create(925, 290, 'briqueOriginale');
+            platforms.create(1075, 190, 'briqueOriginale');
+            platforms.create(1075, 240, 'briqueOriginale');
+            platforms.create(1075, 290, 'briqueOriginale');
+            platforms.create(1125, 190, 'briqueOriginale');
+            platforms.create(1125, 240, 'briqueOriginale');
+            platforms.create(1125, 290, 'briqueOriginale');
+            platforms.create(2200, 190, 'briqueOriginale');
+            platforms.create(2200, 240, 'briqueOriginale');
+            platforms.create(2200, 290, 'briqueOriginale');
+            
+
+
+        //3eme tiers
+            platforms.create(0 , 340, 'briqueOriginale');
+            platforms.create(0 , 390, 'briqueOriginale');
+            platforms.create(0 , 440, 'briqueOriginale');
+            platforms.create(200 , 340, 'briqueOriginale');
+            platforms.create(200 , 390, 'briqueOriginale');
+            platforms.create(200 , 440, 'briqueOriginale');
+            platforms.create(250 , 340, 'briqueOriginale');
+            platforms.create(250 , 390, 'briqueOriginale');
+            platforms.create(250 , 440, 'briqueOriginale');
+            platforms.create(875 , 340, 'briqueOriginale');
+            platforms.create(875 , 390, 'briqueOriginale');
+            platforms.create(875 , 440, 'briqueOriginale');
+            platforms.create(925 , 340, 'briqueOriginale');
+            platforms.create(925 , 390, 'briqueOriginale');
+            platforms.create(925 , 440, 'briqueOriginale');
+            platforms.create(1075, 340, 'briqueOriginale');
+            platforms.create(1075, 390, 'briqueOriginale');
+            platforms.create(1075, 440, 'briqueOriginale');
+            platforms.create(1125, 340, 'briqueOriginale');
+            platforms.create(1125, 390, 'briqueOriginale');
+            platforms.create(1125, 440, 'briqueOriginale');
+                platforms.create(1700, 447, 'Point1');
+            platforms.create(1775, 340, 'briqueOriginale');
+            platforms.create(1775, 390, 'briqueOriginale');
+            platforms.create(1775, 440, 'briqueOriginale');
+            platforms.create(1825, 340, 'briqueOriginale');
+            platforms.create(1825, 390, 'briqueOriginale');
+            platforms.create(1825, 440, 'briqueOriginale');
+
+        //sur haut * 2
+
+        // sur bas * 2
+        for (let i = 0; i < 10; i++)
+        {
+            for (let j = 0; j < 6; j++)
+            {
+                platforms.create(1175+i*50, 190+j*50, 'briqueOriginale');
+            }
+        }
+
+
+
+        scoreText = this.add.text(20, 40, 'Score: ' + score, { fontSize: '24px', fill: '#ffffff' }).setScrollFactor(0);
+
+        this.physics.add.collider(player, platforms);
+        
+        
+        cursors = this.input.keyboard.createCursorKeys();
+    
+        this.cameras.main.startFollow(player);
+    
+        timerText = this.add.text(20, 10, 'Temps restant: ' + remainingTime, { fontSize: '24px', fill: '#ffffff' }).setScrollFactor(0);
+        this.time.addEvent({
+            delay: 1000,
+            callback: updateTimer,
+            callbackScope: this,
+            loop: true
+        });
+    }
+
+    function update() {
+        if (cursors.left.isDown) {
+            player.setVelocityX(-160);
+            player.setTexture('prince');
+        } else if (cursors.right.isDown) {
+            player.setVelocityX(460);
+            player.setTexture('princeDroite');
+        } else {
+            player.setVelocityX(0);
+        }
+        if (cursors.up.isDown && player.body.touching.down) {
+            player.setVelocityY(-330);
+        }
+    
+        // Vérifie si le joueur atteint la position x = 6970 et change l'image de la porte
+        if (player.x >= 6970 && porteFin.texture.key === 'porteFermee') {
+            porteFin.setTexture('porteFin');
+        }
+
+        if (checkOverlap(player, porteFin)) {
+            player.setActive(false).setVisible(false);
+            porteFin.setTexture('porteGagne');
+            const winText = this.add.text(6950, 300, 'GAGNÉ\nScore: ' + score, { fontSize: '24px', fill: '#ffffff' });
+            winText.setScrollFactor(0);
+          }
+    }
+
+    function updateTimer() {
+        if (!gameWonState && !gameOverState) {
+            remainingTime--;
+            timerText.setText('Temps restant: ' + remainingTime);
+            score = remainingTime;
+            scoreText.setText('Score: ' + score);
+    
+            if (remainingTime <= 0) {
+                gameOver(this);
+            }
+        }
+    }
+
+
+
+    function checkOverlap(spriteA, spriteB) {
+        var boundsA = spriteA.getBounds();
+        var boundsB = spriteB.getBounds();
+    
+        return Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB);
+    }
+
+
+
+    function gameOver() {
+        this.physics.pause();
+        player.setTint(0xff0000);
+        timerText.setText('Perdu!');
+    }
+
+
