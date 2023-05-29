@@ -11,7 +11,7 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 100 },
+            gravity: { y: 400 },
             debug: false
         }
     }
@@ -37,6 +37,7 @@ function preload() {
     this.load.image('princeDroite', 'img/PrinceDroite.png');
     this.load.image('princeDroiteDep', 'img/PrinceDroiteDep.png');
     this.load.image('princeDep', 'img/PrinceGaucheDep.png');
+    this.load.image('princeCouche', 'img/PrinceCouche.png');
     this.load.image('sol', 'img/Sol.png');
     this.load.image('porteFin', 'img/porteFin.png');
     this.load.image('porteGagne', 'img/porteGagne.png');
@@ -360,10 +361,10 @@ function create() {
        // 2975 , 440
 
         //Portes
-        platforms.create(1700,40, 'Grille');
-        platforms.create(4700,40, 'Grille');
+        platforms.create(1700,65, 'Grille');
+        platforms.create(4700,65, 'Grille');
 
-        const plateforme1 = platforms.create(4650, 230, 'Piege1');
+        const plateforme1 = platforms.create(4650, 250, 'Piege1');
         const plateforme2 = platforms.create(5700, 390, 'Piege1');
         let trapState = 'Piege1';
         setInterval(toggleTrapImage, 500);
@@ -416,7 +417,7 @@ function create() {
 
     function update() {
         if (cursors.left.isDown) {
-            player.setVelocityX(-100);
+            player.setVelocityX(-200);
             if (player.texture.key === 'prince')
             {
                 player.setTexture('princeDep');
@@ -427,21 +428,25 @@ function create() {
             }
             
         } else if (cursors.right.isDown) {
-            player.setVelocityX(100);
+            player.setVelocityX(200);
             if (player.texture.key === 'princeDroite')
             {
                 player.setTexture('princeDroiteDep')
             }
+            else if (cursors.shift.isDown) {
+                player.setTexture('princeCouche');
+            }
             else{
             player.setTexture('princeDroite');
             }
+
 
         }
          else {
             player.setVelocityX(0);
         }
         if (cursors.up.isDown && player.body.touching.down) {
-            player.setVelocityY(-330);
+            player.setVelocityY(-380);
             
         }
     
@@ -454,7 +459,7 @@ function create() {
         if (checkOverlap(player, porteFin)) {
             player.setActive(false).setVisible(false);
             porteFin.setTexture('porteGagne');
-            const winText = this.add.text(50, 300, 'GAGNÉ', { fontSize: '120px', fill: '#151515' });
+            const winText = this.add.text(50, 300, 'GAGNÉ', { fontSize: '120px', fill: '#00ff00' });
             winText.setScrollFactor(0);
             this.physics.pause();
             return score;
@@ -488,29 +493,29 @@ function create() {
 
 
 
-    function gameOver() {
+    function gameOver(scene) {
         player.setTint(0xff0000);
-        const winText = this.add.text(
-          this.cameras.main.centerX,
-          this.cameras.main.centerY,
+        const winText = scene.add.text(
+          scene.cameras.main.centerX,
+          scene.cameras.main.centerY,
           'PERDU',
-          { fontSize: '120px', fill: '#151515' }
+          { fontSize: '120px', fill: '#ff0000' }
         );
         winText.setOrigin(0.5);
         winText.setScrollFactor(0);
-        this.physics.pause();
-        gameOverState = true;
+        scene.physics.pause();
+        scene.gameOverState = true;
       }
 
 
     function trapCollision(player, trap) {
         if (trap.texture.key === 'Piege1') {
-          gameOver();
+          gameOver(this);
         }
       }
 
       function checkTime() {
         if (!gameWonState && !gameOverState && remainingTime === 0) {
-            gameOver();
+            gameOver(this);
         }
     }
